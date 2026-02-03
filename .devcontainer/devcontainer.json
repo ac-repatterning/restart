@@ -16,8 +16,7 @@ Configuration README: https://github.com/devcontainers/templates/tree/main/src/p
 
   // Features to add to the dev container; https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {"version": "latest"},
-    "ghcr.io/devcontainers-contrib/features/bash-command:1": {}
+    "ghcr.io/devcontainers/features/git:1": {"version": "latest"}
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
