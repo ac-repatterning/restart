@@ -5,7 +5,6 @@ import sys
 import pandas as pd
 
 import src.assets.partitions
-import src.data.points
 import src.elements.partitions as prt
 import src.elements.s3_parameters as s3p
 import src.elements.text_attributes as txa
