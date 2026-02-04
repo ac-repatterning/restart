@@ -24,4 +24,4 @@ class Config:
 
         # Template
         self.s3_parameters_key = 's3_parameters.yaml'
-        self.attributes_key = 'data/restart/attributes.json'
+        self.arguments_key = 'data/restart/arguments.json'
