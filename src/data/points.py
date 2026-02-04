@@ -76,7 +76,7 @@ class Points:
         self.__directories.create(path=directory)
 
         message = self.__streams.write(
-            blob=data, path=os.path.join(directory, f'{partition.datestr}.csv'))
+            blob=data, path=os.path.join(directory, ...))
 
         return message
 
@@ -89,7 +89,7 @@ class Points:
 
         computations = []
         for partition in partitions:
-            url = self.__url.format(ts_id=partition.ts_id, datestr=partition.datestr)
+            url = self.__url.format(ts_id=partition.ts_id, datestr=...)
             data = self.__get_data(url=url)
             message = self.__persist(data=data, partition=partition)
             computations.append(message)
