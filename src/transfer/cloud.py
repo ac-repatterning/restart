@@ -22,7 +22,8 @@ class Cloud:
     Sets up local & cloud environments
     """
 
-    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, arguments: dict, partitions: list[prt.Partitions]):
+    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, arguments: dict,
+                 partitions: list[prt.Partitions]):
         """
 
         :param service: A suite of services for interacting with Amazon Web Services.<br>
