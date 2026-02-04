@@ -10,7 +10,6 @@ import src.elements.partitions as prt
 import src.elements.s3_parameters as s3p
 import src.elements.text_attributes as txa
 import src.functions.cache
-import src.functions.directories
 import src.functions.streams
 
 
@@ -57,7 +56,7 @@ class Interface:
 
         return assets
 
-    def exc(self):
+    def exc(self) -> list[prt.Partitions]:
         """
 
         :return:
@@ -66,6 +65,8 @@ class Interface:
         # Assets that have points that span a core period.
         assets = self.__get_assets()
         logging.info(assets)
+        logging.info(assets[['ts_id', 'from', 'to']])
+        assets.info()
 
         # If not starting from scratch
         if not self.__arguments.get('reacquire'):
@@ -79,12 +80,8 @@ class Interface:
             src.functions.cache.Cache().exc()
             sys.exit()
 
-        '''
         # Partitions for parallel data retrieval; for parallel computing.
-        partitions = src.data.partitions.Partitions(data=assets).exc(arguments=self.__arguments)
-
-        # Retrieving time series points
-        src.data.points.Points(period=self.__arguments.get('period')).exc(partitions=partitions)
+        partitions = src.data.partitions.Partitions(data=assets).exc()
+        logging.info(partitions)
 
         return partitions
-        '''
