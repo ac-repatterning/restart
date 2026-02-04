@@ -25,7 +25,7 @@ class Interface:
 
         self.__configurations = config.Config()
 
-    def __get_attributes(self, connector: boto3.session.Session, args: argparse.Namespace) -> dict:
+    def __get_arguments(self, connector: boto3.session.Session, args: argparse.Namespace) -> dict:
         """
 
         :param connector:
@@ -33,17 +33,18 @@ class Interface:
         :return:
         """
 
-        # The baseline attributes
-        attributes = src.s3.configurations.Configurations(connector=connector).objects(
-            key_name=self.__configurations.attributes_key)
+        # The baseline arguments
+        arguments = src.s3.configurations.Configurations(connector=connector).objects(
+            key_name=self.__configurations.arguments_key)
 
-        # Codes
+        # Codes; if arguments['reacquire'] == True, then the data of all gauge stations will be re-acquired.
         if args.codes is not None:
-            attributes['excerpt'] = args.codes
+            arguments['excerpt'] = args.codes
         else:
-            attributes['excerpt'] = None
+            arguments['excerpt'] = None
+            arguments['reacquire'] = True
 
-        return attributes
+        return arguments
 
     def exc(self, args: argparse.Namespace) -> typing.Tuple[boto3.session.Session, s3p.S3Parameters, sr.Service, dict]:
         """
@@ -56,9 +57,9 @@ class Interface:
         s3_parameters: s3p.S3Parameters = src.s3.s3_parameters.S3Parameters(connector=connector).exc()
         service: sr.Service = src.functions.service.Service(
             connector=connector, region_name=s3_parameters.region_name).exc()
-        attributes: dict = self.__get_attributes(connector=connector, args=args)
+        arguments: dict = self.__get_arguments(connector=connector, args=args)
 
         src.preface.setup.Setup(
-            service=service, s3_parameters=s3_parameters).exc(reacquire=attributes['reacquire'])
+            service=service, s3_parameters=s3_parameters).exc(reacquire=arguments['reacquire'])
 
-        return connector, s3_parameters, service, attributes
+        return connector, s3_parameters, service, arguments
