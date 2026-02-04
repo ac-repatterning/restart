@@ -59,7 +59,6 @@ class Interface:
             connector=connector, region_name=s3_parameters.region_name).exc()
         arguments: dict = self.__get_arguments(connector=connector, args=args)
 
-        src.preface.setup.Setup(
-            service=service, s3_parameters=s3_parameters).exc(reacquire=arguments['reacquire'])
+        src.preface.setup.Setup().exc()
 
         return connector, s3_parameters, service, arguments
