@@ -62,7 +62,7 @@ class Interface:
             path=os.path.join(os.getcwd(), 'warehouse'), extension='*', prefix='')
         logging.info(strings)
 
-        # Storage area
+        # Prepare storage areas
         src.transfer.cloud.Cloud(
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments,
             partitions=self.__partitions).exc()
