@@ -6,7 +6,6 @@ import os.path
 import pandas as pd
 
 import config
-import src.data.codes
 import src.data.partitions
 import src.data.points
 import src.functions.directories
