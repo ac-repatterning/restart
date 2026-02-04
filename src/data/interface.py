@@ -1,13 +1,15 @@
 """Module interface.py"""
-import datetime
 import logging
-import os.path
+import sys
 
 import pandas as pd
 
-import config
 import src.data.partitions
 import src.data.points
+import src.elements.partitions as prt
+import src.elements.s3_parameters as s3p
+import src.elements.text_attributes as txa
+import src.functions.cache
 import src.functions.directories
 import src.functions.streams
 
@@ -17,89 +19,68 @@ class Interface:
     Interface
     """
 
-    def __init__(self, attributes: dict):
+    def __init__(self, s3_parameters: s3p.S3Parameters, arguments: dict):
         """
 
-        :param attributes: A set of data acquisition attributes.
+        :param s3_parameters: The overarching S3 parameters settings of this
+                              project, e.g., region code name, buckets, etc.
+        :param arguments: A set of data acquisition arguments.
         """
 
-        self.__attributes = attributes
-
-        # An instance for reading & writing CSV (comma separated values) data files.
+        self.__s3_parameters = s3_parameters
+        self.__arguments = arguments
         self.__streams = src.functions.streams.Streams()
 
-        # the references directory
-        self.__references_ = config.Config().references_
-        directories = src.functions.directories.Directories()
-        directories.create(path=self.__references_)
-
-    def __persist(self, blob: pd.DataFrame, name: str) -> None:
+    def __get_assets(self) -> pd.DataFrame:
         """
-
-        :param blob:
-        :param name:
+        #
         :return:
         """
 
-        message = self.__streams.write(blob=blob, path=os.path.join(self.__references_, f'{name}.csv'))
-        logging.info(message)
+        store: dict = self.__arguments.get('list_of_gauges_store')
+        bucket = self.__s3_parameters[store.get('bucket_class')]
+        prefix = store.get('prefix')
 
-    def __span(self, assets: pd.DataFrame) -> pd.DataFrame:
+        uri = f's3://{bucket}/{prefix}'
+        text = txa.TextAttributes(uri=uri, header=0, date_fields=['from', 'to'])
+
+        return self.__streams.api(text=text)
+
+    def __in_focus(self, assets: pd.DataFrame) -> pd.DataFrame:
         """
 
         :param assets:
         :return:
         """
 
-        starting = datetime.datetime.strptime(self.__attributes.get('starting'), '%Y-%m-%d')
-
-        if self.__attributes.get('reacquire'):
-            at_least = datetime.datetime.strptime(self.__attributes.get('at_least'), '%Y-%m-%d')
-        else:
-            at_least = datetime.datetime.strptime(self.__attributes.get('ending'), '%Y-%m-%d')
-
-        conditionals = (assets['from'] <= starting) & (assets['to'] >= at_least)
-        assets = assets.loc[conditionals, :]
+        assets = assets.loc[assets['ts_id'].isin(self.__arguments.get('excerpt')), :]
 
         return assets
 
-    def __specific(self, assets: pd.DataFrame) -> pd.DataFrame:
-        """
-
-        :param assets:
-        :return:
-        """
-
-        if self.__attributes.get('excerpt') is None:
-            return pd.DataFrame()
-
-        assets = assets.loc[assets['ts_id'].isin(self.__attributes.get('excerpt')), :]
-
-        return assets
-
-    def exc(self):
+    def exc(self) -> list[prt.Partitions]:
         """
 
         :return:
         """
 
         # Assets that have points that span a core period.
-        assets = pd.DataFrame()
-        assets = self.__span(assets=assets.copy())
+        assets = self.__get_assets()
 
         # If not starting from scratch
-        if not self.__attributes.get('reacquire'):
-            assets = self.__specific(assets=assets.copy())
+        if not self.__arguments.get('reacquire'):
+            assets = self.__in_focus(assets=assets.copy())
 
         # Empty
         if assets.empty:
-            return False
+            logging.info('No gauge assets. Set-up:\nReacquire -> %s\nLength of gauge assets list: %s',
+                         self.__arguments.get('reacquire'), assets.shape[0])
+            src.functions.cache.Cache().exc()
+            sys.exit()
 
         # Partitions for parallel data retrieval; for parallel computing.
-        partitions = src.data.partitions.Partitions(data=assets).exc(attributes=self.__attributes)
-        logging.info(partitions)
+        partitions = src.data.partitions.Partitions(data=assets).exc(arguments=self.__arguments)
 
         # Retrieving time series points
-        src.data.points.Points(period=self.__attributes.get('period')).exc(partitions=partitions)
+        src.data.points.Points(period=self.__arguments.get('period')).exc(partitions=partitions)
 
-        return True
+        return partitions
