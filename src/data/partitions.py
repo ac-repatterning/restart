@@ -39,19 +39,19 @@ class Partitions:
 
         return objects.tolist()
 
-    def exc(self, attributes: dict) -> list[prt.Partitions]:
+    def exc(self, arguments: dict) -> list[prt.Partitions]:
         """
 
-        :param attributes:
+        :param arguments:
         :return:
         """
 
         # The boundaries of the dates; datetime format
-        starting = datetime.datetime.strptime(attributes.get('starting'), '%Y-%m-%d')
-        ending = datetime.datetime.strptime(attributes.get('ending'), '%Y-%m-%d')
+        starting = datetime.datetime.strptime(arguments.get('starting'), '%Y-%m-%d')
+        ending = datetime.datetime.strptime(arguments.get('ending'), '%Y-%m-%d')
 
         # Create series
-        frame = pd.date_range(start=starting, end=ending, freq=attributes.get('frequency')
+        frame = pd.date_range(start=starting, end=ending, freq=arguments.get('frequency')
                               ).to_frame(index=False, name='date')
         starts: pd.Series = frame['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
