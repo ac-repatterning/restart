@@ -4,7 +4,7 @@ import sys
 
 import pandas as pd
 
-import src.data.partitions
+import src.assets.partitions
 import src.data.points
 import src.elements.partitions as prt
 import src.elements.s3_parameters as s3p
@@ -81,7 +81,7 @@ class Interface:
             sys.exit()
 
         # Partitions for parallel data retrieval; for parallel computing.
-        partitions = src.data.partitions.Partitions(data=assets).exc()
+        partitions = src.assets.partitions.Partitions(data=assets).exc()
         logging.info(partitions)
 
         return partitions
