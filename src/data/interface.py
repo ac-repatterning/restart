@@ -38,13 +38,13 @@ class Interface:
         """
 
         store: dict = self.__arguments.get('list_of_gauges_store')
-        bucket = self.__s3_parameters[store.get('bucket_class')]
+        bucket = self.__s3_parameters._asdict()[store.get('bucket_class')]
         prefix = store.get('prefix')
 
         uri = f's3://{bucket}/{prefix}'
         text = txa.TextAttributes(uri=uri, header=0, date_fields=['from', 'to'])
 
-        return self.__streams.api(text=text)
+        return self.__streams.read(text=text)
 
     def __in_focus(self, assets: pd.DataFrame) -> pd.DataFrame:
         """
@@ -57,7 +57,7 @@ class Interface:
 
         return assets
 
-    def exc(self) -> list[prt.Partitions]:
+    def exc(self):
         """
 
         :return:
@@ -65,10 +65,12 @@ class Interface:
 
         # Assets that have points that span a core period.
         assets = self.__get_assets()
+        logging.info(assets)
 
         # If not starting from scratch
         if not self.__arguments.get('reacquire'):
             assets = self.__in_focus(assets=assets.copy())
+        logging.info(assets)
 
         # Empty
         if assets.empty:
@@ -77,6 +79,7 @@ class Interface:
             src.functions.cache.Cache().exc()
             sys.exit()
 
+        '''
         # Partitions for parallel data retrieval; for parallel computing.
         partitions = src.data.partitions.Partitions(data=assets).exc(arguments=self.__arguments)
 
@@ -84,3 +87,4 @@ class Interface:
         src.data.points.Points(period=self.__arguments.get('period')).exc(partitions=partitions)
 
         return partitions
+        '''
