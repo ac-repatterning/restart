@@ -36,7 +36,7 @@ class Data:
 
         return frame
 
-    def __call__(self, ts_id: int, starting: str, ending: str):
+    def __call__(self, ts_id: int, starting: str, ending: str) -> pd.DataFrame:
         """
         https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0
         &request=getTimeseriesValues&ts_id=52438010
