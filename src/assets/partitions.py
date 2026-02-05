@@ -28,35 +28,35 @@ class Partitions:
         self.__period = 10
 
     @dask.delayed
-    def __get_partitions(self, instances: pd.DataFrame) -> list[prt.Partitions]:
+    def __get_partitions(self, metadata: pd.DataFrame) -> list[prt.Partitions]:
         """
-        
-        :param instances:
+
+        :param metadata:
         :return:
         """
 
-        records: pd.DataFrame = instances[self.__fields]
+        records: pd.DataFrame = metadata[self.__fields]
         objects: pd.Series = records.apply(lambda x: prt.Partitions(**dict(x)), axis=1)
 
         return objects.tolist()
 
     @dask.delayed
-    def __get_instances(self, x: pd.Series):
+    def __get_metadata(self, instance: pd.Series):
         """
 
-        :param x:
+        :param instance: An instance of a dataframe
         :return:
         """
 
-        __parts = range(x['from'].year, self.__year, self.__period - 1)
+        __parts = range(instance['from'].year, self.__year, self.__period - 1)
         starting = [f'{__part}-01-01' for __part in __parts]
         ending = [f'{__part + self.__period - 1}-01-01' for __part in __parts]
 
-        __data = pd.DataFrame(data={'starting': starting, 'ending': ending})
-        __data['ts_id'] = x['ts_id']
-        __data['catchment_id'] = x['catchment_id']
+        __metadata = pd.DataFrame(data={'starting': starting, 'ending': ending})
+        __metadata['ts_id'] = instance['ts_id']
+        __metadata['catchment_id'] = instance['catchment_id']
 
-        return __data
+        return __metadata
 
     def exc(self) -> list[prt.Partitions]:
         """
@@ -65,9 +65,9 @@ class Partitions:
         """
 
         computations = []
-        for i, x in self.__data.iterrows():
-            instances: pd.DataFrame = self.__get_instances(x = x)
-            partitions: list[prt.Partitions] = self.__get_partitions(instances=instances)
+        for _, instance in self.__data.iterrows():
+            metadata: pd.DataFrame = self.__get_metadata(instance=instance)
+            partitions: list[prt.Partitions] = self.__get_partitions(metadata=metadata)
             computations.append(partitions)
         calculations = dask.compute(computations)[0]
 
