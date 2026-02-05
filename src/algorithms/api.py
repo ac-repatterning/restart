@@ -16,7 +16,7 @@ class API:
         :param connector:
         """
 
-        self.__data = src.algorithms.content.Content(connector=connector)
+        self.__content = src.algorithms.content.Content(connector=connector)
 
         # renaming
         self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
@@ -57,7 +57,7 @@ class API:
                '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
                'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
 
-        content: dict | list[dict] = self.__data.exc(
+        content: dict | list[dict] = self.__content.exc(
             url=url.format(ts_id=ts_id, starting=starting, ending=ending))
 
         return self.__get_frame(content=content)
