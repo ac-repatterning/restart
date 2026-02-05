@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import src.functions.streams
 
+
 class Persist:
     """
     Saves data files by year
