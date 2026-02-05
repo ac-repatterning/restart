@@ -8,7 +8,7 @@ import requests
 import src.functions.secret
 
 
-class Header:
+class Data:
     """
     Special
     """
