@@ -1,11 +1,11 @@
-
+"""Module persist.py"""
 import os
 
 import pandas as pd
 
 class Persist:
     """
-    
+    Saves data files by year
     """
 
     def __init__(self, data: pd.DataFrame, catchment_id: int, ts_id: int):
