@@ -23,13 +23,15 @@ class Partitions:
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'starting', 'ending']
 
-        #
+        # Variables
         self.__year = datetime.datetime.now().year
         self.__period = 10
 
+    @dask.delayed
     def __get_partitions(self, instances: pd.DataFrame) -> list[prt.Partitions]:
         """
-
+        
+        :param instances:
         :return:
         """
 
@@ -38,7 +40,13 @@ class Partitions:
 
         return objects.tolist()
 
+    @dask.delayed
     def __get_instances(self, x: pd.Series):
+        """
+
+        :param x:
+        :return:
+        """
 
         __parts = range(x['from'].year, self.__year, self.__period - 1)
         starting = [f'{__part}-01-01' for __part in __parts]
