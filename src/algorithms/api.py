@@ -2,7 +2,7 @@
 import boto3
 import pandas as pd
 
-import src.algorithms.data
+import src.algorithms.content
 
 
 class API:
@@ -16,7 +16,7 @@ class API:
         :param connector:
         """
 
-        self.__data = src.algorithms.data.Data(connector=connector)
+        self.__data = src.algorithms.content.Content(connector=connector)
 
         # renaming
         self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
