@@ -3,7 +3,7 @@ import dask
 import boto3
 
 import src.elements.partitions as prt
-import src.algorithms.api
+import src.algorithms.data
 
 
 class Interface:
@@ -14,8 +14,8 @@ class Interface:
 
     def exc(self, partitions: list[prt.Partitions]):
 
-        __api = dask.delayed(src.algorithms.api.API(connector=self.__connector).__call__)
+        __data = dask.delayed(src.algorithms.data.Data(connector=self.__connector).__call__)
 
         computations = []
         for partition in partitions:
-            data = __api(ts_id=partition.ts_id, starting=partition.starting, ending=partition.ending)
+            data = __data(ts_id=partition.ts_id, starting=partition.starting, ending=partition.ending)
