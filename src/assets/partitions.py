@@ -1,5 +1,7 @@
 """Module partitions.py"""
+import datetime
 
+import dask
 import pandas as pd
 
 import src.elements.partitions as prt
@@ -21,21 +23,32 @@ class Partitions:
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'starting', 'ending']
 
-    def __get_partitions(self) -> list[prt.Partitions]:
+        #
+        self.__year = datetime.datetime.now().year
+        self.__period = 10
+
+    def __get_partitions(self, instances: pd.DataFrame) -> list[prt.Partitions]:
         """
 
         :return:
         """
 
-        data = self.__data.copy()
-        data = data.assign(
-            starting = data['from'].apply(lambda x: x.strftime('%Y-%m-%d')),
-            ending=data['to'].apply(lambda x: x.strftime('%Y-%m-%d')))
-
-        records: pd.DataFrame = data[self.__fields]
+        records: pd.DataFrame = instances[self.__fields]
         objects: pd.Series = records.apply(lambda x: prt.Partitions(**dict(x)), axis=1)
 
         return objects.tolist()
+
+    def __get_instances(self, x: pd.Series):
+
+        __parts = range(x['from'].year, self.__year, self.__period - 1)
+        starting = [f'{__part}-01-01' for __part in __parts]
+        ending = [f'{__part + self.__period - 1}-01-01' for __part in __parts]
+
+        __data = pd.DataFrame(data={'starting': starting, 'ending': ending})
+        __data['ts_id'] = x['ts_id']
+        __data['catchment_id'] = x['catchment_id']
+
+        return __data
 
     def exc(self) -> list[prt.Partitions]:
         """
@@ -43,4 +56,11 @@ class Partitions:
         :return:
         """
 
-        return self.__get_partitions()
+        computations = []
+        for i, x in self.__data.iterrows():
+            instances: pd.DataFrame = self.__get_instances(x = x)
+            partitions: list[prt.Partitions] = self.__get_partitions(instances=instances)
+            computations.append(partitions)
+        calculations = dask.compute(computations)[0]
+
+        return sum(calculations, [])
