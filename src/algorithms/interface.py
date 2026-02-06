@@ -1,4 +1,5 @@
 """Module algorithms/interface.py"""
+import logging
 import boto3
 import dask
 import pandas as pd
@@ -47,3 +48,6 @@ class Interface:
             data = __data(ts_id=partition.ts_id, starting=partition.starting, ending=partition.ending)
             message = self.__persist(data=data, partition=partition)
             computations.append(message)
+        messages = dask.compute(computations, scheduler='threads')[0]
+
+        logging.info(sum(messages, []))
