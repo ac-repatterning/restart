@@ -1,8 +1,6 @@
 """Module specific.py"""
 import argparse
 
-import src.functions.cache
-
 
 class Specific:
     """
@@ -10,11 +8,7 @@ class Specific:
     """
 
     def __init__(self):
-        """
-        Constructor
-        """
-
-        self.__cache = src.functions.cache.Cache()
+        pass
 
     @staticmethod
     def codes(value: str=None) -> list[int] | None:
