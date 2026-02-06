@@ -67,7 +67,6 @@ class Interface:
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments,
             partitions=self.__partitions).exc()
 
-        '''
         # Transfer
         if not strings.empty:
             messages = src.s3.ingress.Ingress(
@@ -76,4 +75,3 @@ class Interface:
             logging.info(messages)
         else:
             logging.info('Empty')
-        '''
