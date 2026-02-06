@@ -50,7 +50,7 @@ class Data:
 
         return frame
 
-    def __get_temporary(self, url: str):
+    def __get_frame_public(self, url: str):
         """
 
         :param url:
@@ -61,7 +61,7 @@ class Data:
 
         return self.__restructure(content=content)
 
-    def __get_frame(self, content: dict | list[dict]) -> pd.DataFrame:
+    def __get_frame_private(self, content: dict | list[dict]) -> pd.DataFrame:
         """
 
         :param content:
@@ -72,7 +72,6 @@ class Data:
 
     def __call__(self, ts_id: int, starting: str, ending: str) -> pd.DataFrame:
         """
-
 
         :param ts_id: The identification code of a gauge's time series.
         :param starting: Format yyyy-mm-dd
@@ -90,7 +89,7 @@ class Data:
             content: dict | list[dict] = self.__content.exc(
                 url=url.format(ts_id=ts_id, starting=starting, ending=ending))
 
-            return self.__get_frame(content=content)
+            return self.__get_frame_private(content=content)
 
-        return self.__get_temporary(
+        return self.__get_frame_public(
             url=url.format(ts_id=ts_id, starting=starting, ending=ending))
