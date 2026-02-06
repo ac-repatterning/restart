@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import src.functions.streams
 
+import config
+
 
 class Persist:
     """
@@ -24,8 +26,9 @@ class Persist:
         self.__streams = src.functions.streams.Streams()
 
         # Storage
-        self.__path = os.path.join(os.getcwd(), str(catchment_id), str(ts_id))
-        os.makedirs(self.__path)
+        self.__path = os.path.join(config.Config().series_, str(catchment_id), str(ts_id))
+        if not os.path.exists(path=self.__path):
+            os.makedirs(self.__path)
 
     def __persist(self, group: int) -> str:
         """
@@ -45,6 +48,9 @@ class Persist:
 
         :return:
         """
+
+        if self.__data.empty:
+            return ['empty']
 
         states: list[str] = [self.__persist(group = group) for group in self.__data['group'].unique()]
 
