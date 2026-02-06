@@ -36,13 +36,13 @@ class Interface:
         # The baseline arguments
         arguments = src.s3.configurations.Configurations(connector=connector).objects(
             key_name=self.__configurations.arguments_key)
+        arguments['reacquire'] = args.reacquire
 
         # Codes; if arguments['reacquire'] == True, then the data of all gauge stations will be re-acquired.
         if args.codes is not None:
             arguments['excerpt'] = args.codes
         else:
             arguments['excerpt'] = None
-            arguments['reacquire'] = True
 
         return arguments
 
