@@ -46,8 +46,6 @@ class Data:
 
         # The identification codes of the time series
         frame = frame.assign(ts_id=content[0]['ts_id'])
-
-        # Group
         frame['group'] = pd.to_datetime(frame['timestamp'], unit='ms').dt.year
 
         return frame
