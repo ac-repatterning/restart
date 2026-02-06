@@ -67,11 +67,13 @@ class Interface:
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments,
             partitions=self.__partitions).exc()
 
+        '''
         # Transfer
         if not strings.empty:
             messages = src.s3.ingress.Ingress(
                 service=self.__service, bucket_name=self.__s3_parameters.internal).exc(
-                strings=strings, tags={'project': 'hydrography'})
+                strings=strings, tags={'project': self.__arguments.get('project_tag')})
             logging.info(messages)
         else:
             logging.info('Empty')
+        '''
