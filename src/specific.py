@@ -50,4 +50,4 @@ class Specific:
             self.__cache.exc()
             raise err from err
 
-        return False if _value == 0 else True
+        return  _value not in [0]
