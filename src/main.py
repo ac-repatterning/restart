@@ -59,6 +59,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--codes', type=specific.codes,
                         help='Expects a string of one or more comma separated gauge time series codes.')
+    parser.add_argument('--reacquire', type=specific.reacquire, default=0,
+                        help='Expects -> 1; false, 0 or != 0; true')
     args: argparse.Namespace = parser.parse_args()
 
     connector: boto3.session.Session
