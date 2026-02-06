@@ -54,6 +54,7 @@ class Persist:
         if self.__data.empty:
             return [f'{self.__partition.ts_id}, {self.__partition.starting}: empty']
 
-        states: list[str] = [f'{str(self.__partition.ts_id)}, ' + self.__persist(group = group) for group in self.__data['group'].unique()]
+        states: list[str] = [f'{str(self.__partition.ts_id)}, ' + self.__persist(group = group)
+                             for group in self.__data['group'].unique()]
 
         return states
