@@ -2,6 +2,7 @@
 import logging
 import sys
 
+import dask
 import dask.distributed
 
 import src.elements.partitions as prt
@@ -74,11 +75,11 @@ class Cloud:
 
         # Strategy Switch: If the bucket exist, do not clear the target prefix, overwrite files instead.
         if bucket.exists():
-            client = dask.distributed.Client()
+
             __prefix = ['data/series'] if self.__arguments.get('reacquire') else [
                 f'data/series/{partition.catchment_id}/{partition.ts_id}' for partition in self.__partitions]
-            futures = client.map(self.__clear_prefix, __prefix)
-            return client.gather(futures)
+            futures = dask.delayed(self.__clear_prefix, __prefix)
+            return futures.compute()
 
         return bucket.create()
 
