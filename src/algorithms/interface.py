@@ -1,4 +1,4 @@
-
+"""Module algorithms/interface.py"""
 import boto3
 import dask
 import pandas as pd
@@ -9,18 +9,36 @@ import src.elements.partitions as prt
 
 
 class Interface:
+    """
+    The interface to the src/algorithms' programs.
+    """
 
     def __init__(self, connector: boto3.session.Session):
+        """
+
+        :param connector:
+        """
 
         self.__connector = connector
 
     @dask.delayed
     def __persist(self, data: pd.DataFrame, partition: prt.Partitions):
+        """
+
+        :param data:
+        :param partition:
+        :return:
+        """
 
         return src.algorithms.persist.Persist(
             data=data, catchment_id=partition.catchment_id, ts_id=partition.ts_id).exc()
 
     def exc(self, partitions: list[prt.Partitions]):
+        """
+
+        :param partitions:
+        :return:
+        """
 
         __data = dask.delayed(src.algorithms.data.Data(connector=self.__connector).__call__)
 
