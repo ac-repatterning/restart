@@ -3,10 +3,9 @@ import os
 
 import pandas as pd
 
+import config
 import src.elements.partitions as prt
 import src.functions.streams
-
-import config
 
 
 class Persist:
