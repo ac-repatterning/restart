@@ -2,6 +2,8 @@
 import os
 
 import pandas as pd
+
+import src.elements.partitions as prt
 import src.functions.streams
 
 import config
@@ -12,21 +14,22 @@ class Persist:
     Saves data files by year
     """
 
-    def __init__(self, data: pd.DataFrame, catchment_id: int, ts_id: int):
+    def __init__(self, data: pd.DataFrame, partition: prt.Partitions):
         """
 
         :param data: A raw time series data set of a gauge station
-        :param catchment_id:
-        :param ts_id:
+        :param partition:
         """
 
         self.__data = data
+        self.__partition = partition
 
         # Streams
         self.__streams = src.functions.streams.Streams()
 
         # Storage
-        self.__path = os.path.join(config.Config().series_, str(catchment_id), str(ts_id))
+        self.__path = os.path.join(
+            config.Config().series_, str(self.__partition.catchment_id), str(self.__partition.ts_id))
         if not os.path.exists(path=self.__path):
             os.makedirs(self.__path)
 
@@ -50,8 +53,8 @@ class Persist:
         """
 
         if self.__data.empty:
-            return ['empty']
+            return [f'{self.__partition.ts_id}, {self.__partition.starting}: empty']
 
-        states: list[str] = [self.__persist(group = group) for group in self.__data['group'].unique()]
+        states: list[str] = [f'{str(self.__partition.ts_id)}, ' + self.__persist(group = group) for group in self.__data['group'].unique()]
 
         return states
