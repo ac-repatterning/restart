@@ -51,6 +51,9 @@ class Interface:
         :return:
         """
 
+        if self.__arguments.get('excerpt') is None:
+            return pd.DataFrame()
+
         assets = assets.loc[assets['ts_id'].isin(self.__arguments.get('excerpt')), :]
 
         return assets
@@ -61,7 +64,7 @@ class Interface:
         :return:
         """
 
-        # Assets that have points that span a core period.
+        # Assets
         assets = self.__get_assets()
 
         # If not starting from scratch
@@ -76,7 +79,7 @@ class Interface:
             sys.exit()
 
         # Partitions for parallel data retrieval; for parallel computing.
-        partitions = src.assets.partitions.Partitions(data=assets).exc()
+        partitions = src.assets.partitions.Partitions(assets=assets, arguments=self.__arguments).exc()
         logging.info(partitions)
 
         return partitions

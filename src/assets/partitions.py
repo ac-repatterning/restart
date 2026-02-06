@@ -12,20 +12,21 @@ class Partitions:
     Partitions for parallel computation.
     """
 
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, assets: pd.DataFrame, arguments: dict):
         """
 
-        :param data:
+        :param assets:
+        :param arguments:
         """
 
-        self.__data = data
+        self.__assets = assets
+        self.__arguments = arguments
 
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'starting', 'ending']
 
         # Variables
         self.__year = datetime.datetime.now().year
-        self.__period = 10
 
     @dask.delayed
     def __get_partitions(self, metadata: pd.DataFrame) -> list[prt.Partitions]:
@@ -48,9 +49,9 @@ class Partitions:
         :return:
         """
 
-        __parts = range(instance['from'].year, self.__year, self.__period - 1)
+        __parts = range(instance['from'].year, self.__year, self.__arguments.get('period') - 1)
         starting = [f'{__part}-01-01' for __part in __parts]
-        ending = [f'{__part + self.__period - 1}-01-01' for __part in __parts]
+        ending = [f'{__part + self.__arguments.get('period') - 1}-01-01' for __part in __parts]
 
         __metadata = pd.DataFrame(data={'starting': starting, 'ending': ending})
         __metadata['ts_id'] = instance['ts_id']
@@ -65,7 +66,7 @@ class Partitions:
         """
 
         computations = []
-        for _, instance in self.__data.iterrows():
+        for _, instance in self.__assets.iterrows():
             metadata: pd.DataFrame = self.__get_metadata(instance=instance)
             partitions: list[prt.Partitions] = self.__get_partitions(metadata=metadata)
             computations.append(partitions)

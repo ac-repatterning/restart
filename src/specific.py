@@ -1,5 +1,7 @@
 """Module specific.py"""
 import argparse
+import logging
+import src.functions.cache
 
 
 class Specific:
@@ -8,7 +10,8 @@ class Specific:
     """
 
     def __init__(self):
-        pass
+
+        self.__cache = src.functions.cache.Cache()
 
     @staticmethod
     def codes(value: str=None) -> list[int] | None:
@@ -30,3 +33,21 @@ class Specific:
             raise err from err
 
         return _codes
+
+    def reacquire(self, value: str='0') -> bool:
+        """
+
+        :param value:
+        :return:
+        """
+
+        try:
+            _value = int(value)
+        except argparse.ArgumentTypeError as err:
+            logging.info(('The optional parameter --reacquire expects an integer; '
+                          '0 indicates false, i.e., do not reacquire, and '
+                          '1 or != 0 indicates true, i.e., reacquire'))
+            self.__cache.exc()
+            raise err from err
+
+        return  _value not in [0]
