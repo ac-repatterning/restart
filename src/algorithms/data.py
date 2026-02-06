@@ -22,10 +22,20 @@ class Data:
         self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
 
     def __get_frame(self, content: dict | list[dict]) -> pd.DataFrame:
+        """
+
+        :param content:
+        :return:
+        """
 
         # The data in data frame form
         columns = content[0]['columns'].split(',')
         frame = pd.DataFrame.from_records(data=content[0]['data'], columns=columns)
+
+        if frame.empty:
+            return frame
+
+        # Renaming
         frame.rename(columns=self.__rename, inplace=True)
 
         # The identification codes of the time series
