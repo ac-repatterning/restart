@@ -7,7 +7,7 @@
 
 ## Environments
 
-**Note**, the [requirements.txt](requirements.txt) file includes
+**Note**, the [requirements.txt](/.devcontainer/requirements.txt) file includes
 
 * dask[complete]
 
@@ -29,8 +29,8 @@ by default.  Hence, during the Dockerfile building steps each applicable Docker 
 
 For this Python project/template, the remote development environment requires
 
-* [Dockerfile](Dockerfile)
-* [requirements.txt](requirements.txt)
+* [Dockerfile](/.devcontainer/Dockerfile)
+* [requirements.txt](/.devcontainer/requirements.txt)
 
 An image is built via the command
 
