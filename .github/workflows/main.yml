@@ -14,7 +14,11 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        python-version: [3.12]
+        python-version: [3.13]
+
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -41,8 +45,11 @@ jobs:
           echo "Issues in relation to logic (F7), syntax (Python E9, Flake F7), mathematical
           formulae symbols (F63), undefined variable names (F82):"
           
-          printf "\n src/data "
-          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/data
+          printf "\n src/algorithms "
+          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/algorithms
+          
+          printf "\n src/assets "
+          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/assets
                     
           printf "\n src/elements "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/elements
@@ -64,8 +71,11 @@ jobs:
           printf "\n\n"
           echo "Complexity issues:"
           
-          printf "\n src/data "
-          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/data
+          printf "\n src/algorithms "
+          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/algorithms
+          
+          printf "\n src/assets "
+          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/assets
           
           printf "\n src/elements "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/elements
@@ -88,8 +98,11 @@ jobs:
           printf "\n"
           echo "============================= pylint session starts =============================="
           
-          printf "\n Package src/data"
-          pylint --rcfile .pylintrc src/data
+          printf "\n Package src/algorithms"
+          pylint --rcfile .pylintrc src/algorithms
+          
+          printf "\n Package src/assets"
+          pylint --rcfile .pylintrc src/assets
           
           printf "\n Package src/elements"
           pylint --rcfile .pylintrc src/elements
@@ -120,8 +133,11 @@ jobs:
           printf "\n"
           echo "============================= coverage session starts =============================="
           
-          printf "\nCoverage tests/data/"
-          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/data/"
+          printf "\nCoverage tests/algorithms/"
+          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/algorithms/"
+          
+          printf "\nCoverage tests/assets/"
+          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/assets/"
           
           printf "\nCoverage tests/elements/"
           printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/elements/"
