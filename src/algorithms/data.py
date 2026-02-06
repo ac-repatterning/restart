@@ -3,6 +3,7 @@ import boto3
 import pandas as pd
 
 import src.algorithms.content
+import src.functions.objects
 
 
 class Data:
@@ -16,11 +17,43 @@ class Data:
         :param connector:
         """
 
+        # pylint: disable=W0238
         self.__content = src.algorithms.content.Content(connector=connector)
+        self.__objects = src.functions.objects.Objects()
 
         # renaming
         self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
 
+    # noinspection DuplicatedCode
+    def __get_temporary(self, url: str):
+        """
+
+        :param url:
+        :return:
+        """
+
+        parts = self.__objects.api(url=url)
+
+        # The data in data frame form
+        columns = parts[0]['columns'].split(',')
+        frame = pd.DataFrame.from_records(data=parts[0]['data'], columns=columns)
+
+        if frame.empty:
+            return frame
+
+        # Renaming
+        frame.rename(columns=self.__rename, inplace=True)
+
+        # The identification codes of the time series
+        frame = frame.assign(ts_id=parts[0]['ts_id'])
+
+        # Group
+        frame['group'] = pd.to_datetime(frame['timestamp'], unit='ms').dt.year
+
+        return frame
+
+    # noinspection DuplicatedCode
+    # pylint: disable=W0238
     def __get_frame(self, content: dict | list[dict]) -> pd.DataFrame:
         """
 
@@ -48,12 +81,10 @@ class Data:
 
     def __call__(self, ts_id: int, starting: str, ending: str) -> pd.DataFrame:
         """
-        https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0
-        &request=getTimeseriesValues&ts_id=52438010
-        &from=2003-01-01&to=2012-12-31&returnfields=Timestamp,Value,Quality Code&metadata=true
-        &md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,
-        catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json
+        content: dict | list[dict] = self.__content.exc(
+            url=url.format(ts_id=ts_id, starting=starting, ending=ending))
 
+        return self.__get_frame(content=content)
 
         :param ts_id: The identification code of a gauge's time series.
         :param starting: Format yyyy-mm-dd
@@ -67,7 +98,4 @@ class Data:
                '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
                'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
 
-        content: dict | list[dict] = self.__content.exc(
-            url=url.format(ts_id=ts_id, starting=starting, ending=ending))
-
-        return self.__get_frame(content=content)
+        return self.__get_temporary(url=url.format(ts_id=ts_id, starting=starting, ending=ending))
