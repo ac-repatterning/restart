@@ -63,14 +63,10 @@ class Interface:
 
         # Assets that have points that span a core period.
         assets = self.__get_assets()
-        logging.info(assets)
-        logging.info(assets[['ts_id', 'from', 'to']])
-        assets.info()
 
         # If not starting from scratch
         if not self.__arguments.get('reacquire'):
             assets = self.__in_focus(assets=assets.copy())
-        logging.info(assets)
 
         # Empty
         if assets.empty:
