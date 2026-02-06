@@ -19,13 +19,12 @@ def main():
     # Data acquisition
     partitions: list[prt.Partitions] = src.assets.interface.Interface(
         s3_parameters=s3_parameters, arguments=arguments).exc()
-    logger.info(partitions)
 
     src.algorithms.interface.Interface(
         connector=connector).exc(partitions=partitions)
 
-    # src.transfer.interface.Interface(
-    #     service=service, s3_parameters=s3_parameters, arguments=arguments, partitions=partitions).exc()
+    src.transfer.interface.Interface(
+        service=service, s3_parameters=s3_parameters, arguments=arguments, partitions=partitions).exc()
 
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
