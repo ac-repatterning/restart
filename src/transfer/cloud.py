@@ -61,7 +61,7 @@ class Cloud:
 
         return True
 
-    def __s3(self):
+    def __s3(self) -> bool | list[bool]:
         """
         Prepares an Amazon S3 (Simple Storage Service) bucket.
 
@@ -78,9 +78,8 @@ class Cloud:
 
             __prefix = ['data/series'] if self.__arguments.get('reacquire') else [
                 f'data/series/{partition.catchment_id}/{partition.ts_id}' for partition in self.__partitions]
-            futures = dask.delayed(self.__clear_prefix, __prefix)
 
-            return futures.compute()
+            return [self.__clear_prefix(prefix=prefix) for prefix in __prefix]
 
         return bucket.create()
 
