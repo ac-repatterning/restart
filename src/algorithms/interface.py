@@ -1,5 +1,6 @@
 """Module algorithms/interface.py"""
 import logging
+
 import boto3
 import dask
 import pandas as pd
@@ -32,7 +33,7 @@ class Interface:
         """
 
         return src.algorithms.persist.Persist(
-            data=data, catchment_id=partition.catchment_id, ts_id=partition.ts_id).exc()
+            data=data, partition=partition).exc()
 
     def exc(self, partitions: list[prt.Partitions]):
         """
