@@ -2,9 +2,6 @@
 import logging
 import sys
 
-import dask
-import dask.distributed
-
 import src.elements.partitions as prt
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
