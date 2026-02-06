@@ -22,7 +22,7 @@ def main():
         s3_parameters=s3_parameters, arguments=arguments).exc()
 
     src.algorithms.interface.Interface(
-        connector=connector).exc(partitions=partitions)
+        connector=connector, arguments=arguments).exc(partitions=partitions)
 
     src.transfer.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments, partitions=partitions).exc()

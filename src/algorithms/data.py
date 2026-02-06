@@ -11,11 +11,14 @@ class Data:
     Data
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, connector: boto3.session.Session, arguments: dict):
         """
 
         :param connector:
+        :param arguments:
         """
+
+        self.__arguments = arguments
 
         # pylint: disable=W0238
         self.__content = src.algorithms.content.Content(connector=connector)
@@ -24,37 +27,7 @@ class Data:
         # renaming
         self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
 
-    # noinspection DuplicatedCode
-    def __get_temporary(self, url: str):
-        """
-
-        :param url:
-        :return:
-        """
-
-        parts = self.__objects.api(url=url)
-
-        # The data in data frame form
-        columns = parts[0]['columns'].split(',')
-        frame = pd.DataFrame.from_records(data=parts[0]['data'], columns=columns)
-
-        if frame.empty:
-            return frame
-
-        # Renaming
-        frame.rename(columns=self.__rename, inplace=True)
-
-        # The identification codes of the time series
-        frame = frame.assign(ts_id=parts[0]['ts_id'])
-
-        # Group
-        frame['group'] = pd.to_datetime(frame['timestamp'], unit='ms').dt.year
-
-        return frame
-
-    # noinspection DuplicatedCode
-    # pylint: disable=W0238
-    def __get_frame(self, content: dict | list[dict]) -> pd.DataFrame:
+    def __restructure(self, content: dict | list[dict]):
         """
 
         :param content:
@@ -73,18 +46,32 @@ class Data:
 
         # The identification codes of the time series
         frame = frame.assign(ts_id=content[0]['ts_id'])
-
-        # Group
         frame['group'] = pd.to_datetime(frame['timestamp'], unit='ms').dt.year
 
         return frame
 
+    def __get_frame_public(self, url: str):
+        """
+
+        :param url:
+        :return:
+        """
+
+        content: dict | list[dict] = self.__objects.api(url=url)
+
+        return self.__restructure(content=content)
+
+    def __get_frame_private(self, content: dict | list[dict]) -> pd.DataFrame:
+        """
+
+        :param content:
+        :return:
+        """
+
+        return self.__restructure(content=content)
+
     def __call__(self, ts_id: int, starting: str, ending: str) -> pd.DataFrame:
         """
-        content: dict | list[dict] = self.__content.exc(
-            url=url.format(ts_id=ts_id, starting=starting, ending=ending))
-
-        return self.__get_frame(content=content)
 
         :param ts_id: The identification code of a gauge's time series.
         :param starting: Format yyyy-mm-dd
@@ -98,4 +85,11 @@ class Data:
                '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
                'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
 
-        return self.__get_temporary(url=url.format(ts_id=ts_id, starting=starting, ending=ending))
+        if self.__arguments.get('via-key'):
+            content: dict | list[dict] = self.__content.exc(
+                url=url.format(ts_id=ts_id, starting=starting, ending=ending))
+
+            return self.__get_frame_private(content=content)
+
+        return self.__get_frame_public(
+            url=url.format(ts_id=ts_id, starting=starting, ending=ending))

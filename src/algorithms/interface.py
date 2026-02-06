@@ -15,13 +15,15 @@ class Interface:
     The interface to the src/algorithms' programs.
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, connector: boto3.session.Session, arguments: dict):
         """
 
         :param connector:
+        :param arguments:
         """
 
         self.__connector = connector
+        self.__arguments = arguments
 
     @dask.delayed
     def __persist(self, data: pd.DataFrame, partition: prt.Partitions):
@@ -42,7 +44,7 @@ class Interface:
         :return:
         """
 
-        __data = dask.delayed(src.algorithms.data.Data(connector=self.__connector).__call__)
+        __data = dask.delayed(src.algorithms.data.Data(connector=self.__connector, arguments=self.__arguments).__call__)
 
         computations = []
         for partition in partitions:
