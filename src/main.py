@@ -15,6 +15,7 @@ def main():
     # Logging
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(__name__)
+    logger.info(args)
 
     # Data acquisition
     partitions: list[prt.Partitions] = src.assets.interface.Interface(
@@ -49,11 +50,10 @@ if __name__ == '__main__':
     import src.elements.partitions as prt
     import src.functions.cache
     import src.functions.service
+    import src.preface.interface
     import src.s3.s3_parameters
-    import src.preface.setup
     import src.specific
     import src.transfer.interface
-    import src.preface.interface
 
     specific = src.specific.Specific()
     parser = argparse.ArgumentParser()
