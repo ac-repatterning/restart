@@ -41,6 +41,9 @@ jobs:
           echo "Issues in relation to logic (F7), syntax (Python E9, Flake F7), mathematical
           formulae symbols (F63), undefined variable names (F82):"
           
+          printf "\n src/algorithms "
+          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/algorithms
+          
           printf "\n src/assets "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/assets
                     
@@ -63,6 +66,9 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           printf "\n\n"
           echo "Complexity issues:"
+          
+          printf "\n src/algorithms "
+          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/algorithms
           
           printf "\n src/assets "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/assets
@@ -87,6 +93,9 @@ jobs:
         run: |
           printf "\n"
           echo "============================= pylint session starts =============================="
+          
+          printf "\n Package src/algorithms"
+          pylint --rcfile .pylintrc src/algorithms
           
           printf "\n Package src/assets"
           pylint --rcfile .pylintrc src/assets
@@ -119,6 +128,9 @@ jobs:
         run: |
           printf "\n"
           echo "============================= coverage session starts =============================="
+          
+          printf "\nCoverage tests/algorithms/"
+          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/algorithms/"
           
           printf "\nCoverage tests/assets/"
           printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/assets/"
