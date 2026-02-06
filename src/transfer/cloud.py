@@ -79,7 +79,7 @@ class Cloud:
             __prefix = ['data/series'] if self.__arguments.get('reacquire') else [
                 f'data/series/{partition.catchment_id}/{partition.ts_id}' for partition in self.__partitions]
             futures = dask.delayed(self.__clear_prefix, __prefix)
-            
+
             return futures.compute()
 
         return bucket.create()
