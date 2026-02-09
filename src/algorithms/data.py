@@ -53,7 +53,7 @@ class Data:
     def __get_frame_public(self, url: str):
         """
 
-        :param url: A data set's uniform resource locator
+        :param url: A data set's uniform resource locator.
         :return:
         """
 
@@ -61,12 +61,14 @@ class Data:
 
         return self.__restructure(content=content)
 
-    def __get_frame_private(self, content: dict | list[dict]) -> pd.DataFrame:
+    def __get_frame_private(self, url: str) -> pd.DataFrame:
         """
 
-        :param content: The content of a request.
+        :param url: A data set's uniform resource locator.
         :return:
         """
+
+        content: dict | list[dict] = self.__content.exc(url=url)
 
         return self.__restructure(content=content)
 
@@ -86,10 +88,8 @@ class Data:
                'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
 
         if self.__arguments.get('via_key'):
-            content: dict | list[dict] = self.__content.exc(
-                url=url.format(ts_id=ts_id, starting=starting, ending=ending))
-
-            return self.__get_frame_private(content=content)
+            return self.__get_frame_private(
+                url.format(ts_id=ts_id, starting=starting, ending=ending))
 
         return self.__get_frame_public(
             url=url.format(ts_id=ts_id, starting=starting, ending=ending))
