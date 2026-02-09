@@ -2,10 +2,7 @@
 import json
 import sys
 
-import boto3
 import requests
-
-import src.functions.secret
 
 
 class Content:
@@ -13,33 +10,13 @@ class Content:
     Special
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, headers: dict):
         """
 
-        :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
-                          Web Services (AWS) profile details, which allows for programmatic interaction with AWS.
+        :param headers: An access token header.
         """
 
-        # Hence
-        self.__secret = src.functions.secret.Secret(connector=connector)
-
-        # Headers
-        self.__headers = self.__get_headers()
-
-    def __get_headers(self) -> dict:
-        """
-        This function sets up an ephemeral data retrieval token dict via a client's key.
-
-        :return:
-        """
-
-        token_url = 'https://timeseries.sepa.org.uk/KiWebPortal/rest/auth/oidcServer/token'
-        access_key = self.__secret.exc(secret_id='HydrographyProject', node='sepa')
-        headers =  {'Authorization':'Basic ' + access_key}
-        response_token= requests.post(token_url, headers = headers, data = 'grant_type=client_credentials', timeout=600)
-        access_token = response_token.json()['access_token']
-
-        return {'Authorization':'Bearer ' + access_token}
+        self.__headers = headers
 
     def __get_content(self, url: str) -> str:
         """

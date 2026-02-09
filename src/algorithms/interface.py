@@ -6,6 +6,7 @@ import dask
 import pandas as pd
 
 import src.algorithms.data
+import src.algorithms.headers
 import src.algorithms.persist
 import src.elements.partitions as prt
 
@@ -18,8 +19,9 @@ class Interface:
     def __init__(self, connector: boto3.session.Session, arguments: dict):
         """
 
-        :param connector:
-        :param arguments:
+        :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
+                          Web Services (AWS) profile details, which allows for programmatic interaction with AWS.
+        :param arguments: A set of computation arguments.
         """
 
         self.__connector = connector
@@ -29,8 +31,8 @@ class Interface:
     def __persist(self, data: pd.DataFrame, partition: prt.Partitions):
         """
 
-        :param data:
-        :param partition:
+        :param data: A gauge's data set.
+        :param partition: Refer to src/elements/partition.py
         :return:
         """
 
@@ -40,11 +42,13 @@ class Interface:
     def exc(self, partitions: list[prt.Partitions]):
         """
 
-        :param partitions:
+        :param partitions: For more about each object in the list, refer to src/elements/partition.py
         :return:
         """
 
-        __data = dask.delayed(src.algorithms.data.Data(connector=self.__connector, arguments=self.__arguments).__call__)
+        headers = src.algorithms.headers.Headers(connector=self.__connector) \
+            if self.__arguments.get('via_key') else {}
+        __data = dask.delayed(src.algorithms.data.Data(headers=headers(), arguments=self.__arguments).__call__)
 
         computations = []
         for partition in partitions:
