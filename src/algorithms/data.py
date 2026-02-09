@@ -30,7 +30,7 @@ class Data:
     def __restructure(self, content: dict | list[dict]):
         """
 
-        :param content:
+        :param content: The content of a request.
         :return:
         """
 
@@ -53,7 +53,7 @@ class Data:
     def __get_frame_public(self, url: str):
         """
 
-        :param url:
+        :param url: A data set's uniform resource locator
         :return:
         """
 
@@ -64,7 +64,7 @@ class Data:
     def __get_frame_private(self, content: dict | list[dict]) -> pd.DataFrame:
         """
 
-        :param content:
+        :param content: The content of a request.
         :return:
         """
 
