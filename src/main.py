@@ -15,7 +15,6 @@ def main():
     # Logging
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(__name__)
-    logger.info(args)
 
     # Data acquisition
     partitions: list[prt.Partitions] = src.assets.interface.Interface(
