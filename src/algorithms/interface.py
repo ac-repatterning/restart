@@ -46,9 +46,9 @@ class Interface:
         :return:
         """
 
-        headers = src.algorithms.headers.Headers(connector=self.__connector).__call__() \
+        headers = src.algorithms.headers.Headers(connector=self.__connector) \
             if self.__arguments.get('via_key') else {}
-        __data = dask.delayed(src.algorithms.data.Data(headers=headers, arguments=self.__arguments).__call__)
+        __data = dask.delayed(src.algorithms.data.Data(headers=headers(), arguments=self.__arguments).__call__)
 
         computations = []
         for partition in partitions:
