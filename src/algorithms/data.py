@@ -11,17 +11,17 @@ class Data:
     Data
     """
 
-    def __init__(self, connector: boto3.session.Session, arguments: dict):
+    def __init__(self, headers: dict, arguments: dict):
         """
 
-        :param connector:
-        :param arguments:
+        :param headers: An access token header.
+        :param arguments: A set of computation arguments.
         """
 
         self.__arguments = arguments
 
         # pylint: disable=W0238
-        self.__content = src.algorithms.content.Content(connector=connector)
+        self.__content = src.algorithms.content.Content(headers=headers)
         self.__objects = src.functions.objects.Objects()
 
         # renaming
@@ -85,7 +85,7 @@ class Data:
                '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
                'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
 
-        if self.__arguments.get('via-key'):
+        if self.__arguments.get('via_key'):
             content: dict | list[dict] = self.__content.exc(
                 url=url.format(ts_id=ts_id, starting=starting, ending=ending))
 
