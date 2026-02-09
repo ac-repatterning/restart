@@ -1,5 +1,5 @@
 """Module api.py"""
-import boto3
+
 import pandas as pd
 
 import src.algorithms.content
